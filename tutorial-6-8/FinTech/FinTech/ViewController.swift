@@ -14,6 +14,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet weak var companySymbolLabel: UILabel!
     @IBOutlet weak var priceLabel: UILabel!
     @IBOutlet weak var priceChangeLabel: UILabel!
+    @IBOutlet weak var logo: UIImageView!
     
     // Индикатор активности
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -39,17 +40,13 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
 
     // Словарь с компаниями для пикера
-    private var companies : [String: String] = ["Apple": "AAPL",
-                                                "Microsoft": "MSFT",
-                                                "Google": "GOOG",
-                                                "Amazon": "AMZN",
-                                                "Facebook": "FB"]
+    private var companies : [String: String] = ["Apple": "AAPL"]
     
     // То что происходит на запуске
     override func viewDidLoad() {
         super.viewDidLoad()
         self.requestQuoteCompanies()
-        
+
         self.companyPicker.dataSource = self
         self.companyPicker.delegate = self
         
@@ -65,11 +62,13 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         self.companySymbolLabel.text = "-"
         self.priceLabel.text = "-"
         self.priceChangeLabel.text = "-"
+        self.logo.isHidden = true
         self.priceChangeLabel.textColor = UIColor(red: 0, green: 0, blue: 0, alpha:1.0)
         
         let selectedRow = self.companyPicker.selectedRow(inComponent: 0)
         let selectedSymbol = Array(self.companies.values)[selectedRow]
         requestQuote(for: selectedSymbol)
+        requestQuotePicture(for: selectedSymbol)
     }
     
     // Заполнение полей на экране
@@ -100,6 +99,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 let data = data
                 else {
                     print("Network error")
+                self.createAlert(title: "Oops..", message: "Network error")
                     return
             }
             self.parseQuote(data: data)
@@ -119,6 +119,8 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 let priceChange = json["change"] as? Double
                 else {
                     print("Invalid JSON format")
+                self.createAlert(title: "Parsing error", message: "Invalid JSON format")
+
                     return
             }
             DispatchQueue.main.async {
@@ -127,10 +129,52 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         }
         catch {
             print("JSON parsing error: " + error.localizedDescription)
+            self.createAlert(title: "Parsing error", message: "JSON parsing error")
         }
     }
     
+    // Запрос к API для получения логотипа компании
+    private func requestQuotePicture(for symbol: String) {
+        let url = URL(string: "https://cloud.iexapis.com/stable/stock/\(symbol)/logo/?token=pk_d588c24949f1445a9750a04d43d9a360")!
+        let dataTask = URLSession.shared.dataTask(with: url) {
+            data, response, error in
+            guard
+                error == nil,
+                (response as? HTTPURLResponse)?.statusCode == 200,
+                let data = data
+                else {
+                    print("Network error")
+                self.createAlert(title: "Oops..", message: "Network error")
+                    return
+            }
+            self.parseQuotePicture(data: data)
+        }
+        dataTask.resume()
+    }
     
+    // Отображение логотипа
+    private func parseQuotePicture(data: Data) {
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: data)
+            guard
+                let json = jsonObject as? [String: Any],
+                let picUrl = json["url"] as? String
+                else {
+                    print("Invalid JSON format")
+                    return
+            }
+            DispatchQueue.main.async {
+                let url = URL(string: picUrl)
+                let data = try? Data(contentsOf: url!)
+                self.logo.image = UIImage(data: data!)
+                self.logo.isHidden = false
+            }
+        }
+        catch {
+            print("JSON parsing error: " + error.localizedDescription)
+        }
+    }
+
     // Запрос к API для получения списка компаний
     private func requestQuoteCompanies() {
         let url = URL(string: "https://cloud.iexapis.com/stable/stock/market/list/mostactive/?token=pk_d588c24949f1445a9750a04d43d9a360")!
@@ -142,6 +186,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 let data = data
                 else {
                     print("Network error")
+                self.createAlert(title: "Oops..", message: "Network error")
                     return
             }
             self.parseQuoteCompanies(data: data)
@@ -149,6 +194,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         dataTask.resume()
     }
     
+    // Парсинг запроса с компаниями (собираем словарь)
     private func parseQuoteCompanies(data: Data) {
         do {
             let jsonObject = try JSONSerialization.jsonObject(with: data)
@@ -156,6 +202,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 let json = jsonObject as? [[String: Any]]
                 else {
                     print("Invalid JSON format")
+                DispatchQueue.main.async {
+                    let alertController = UIAlertController(title: "Oops..", message: "Invalid JSON format.", preferredStyle: .alert)
+                self.present(alertController, animated: true, completion: nil)
+                }
                     return
             }
             DispatchQueue.main.async {
@@ -164,12 +214,25 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                     let symbol = item["symbol"] as! String
                     self.companies[name] = symbol
                 }
+                self.companyPicker.reloadAllComponents()
             }
         }
         catch {
             print("JSON parsing error: " + error.localizedDescription)
+            self.createAlert(title: "Parsing error", message: "JSON parsing error")
         }
     }
+    
+    // Создание оповещения
+    private func createAlert(title: String, message: String) {
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                
+                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                
+                self.present(alert, animated: true)
+            }
+        }
 
 }
 

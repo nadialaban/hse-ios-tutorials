@@ -13,8 +13,6 @@
 		05E647CC2576916B00B49C83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05E647CA2576916B00B49C83 /* Main.storyboard */; };
 		05E647CE2576916F00B49C83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05E647CD2576916F00B49C83 /* Assets.xcassets */; };
 		05E647D12576917000B49C83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05E647CF2576917000B49C83 /* LaunchScreen.storyboard */; };
-		05E647DF2577284900B49C83 /* FinTech in Resources */ = {isa = PBXBuildFile; fileRef = 05E647DE2577284900B49C83 /* FinTech */; };
-		05E647E225772A4700B49C83 /* FinTech in Resources */ = {isa = PBXBuildFile; fileRef = 05E647E125772A4700B49C83 /* FinTech */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +24,6 @@
 		05E647CD2576916F00B49C83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		05E647D02576917000B49C83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		05E647D22576917000B49C83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		05E647DE2577284900B49C83 /* FinTech */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FinTech; sourceTree = "<group>"; };
-		05E647E125772A4700B49C83 /* FinTech */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FinTech; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,9 +59,7 @@
 				05E647C42576916B00B49C83 /* AppDelegate.swift */,
 				05E647C62576916B00B49C83 /* SceneDelegate.swift */,
 				05E647C82576916B00B49C83 /* ViewController.swift */,
-				05E647E125772A4700B49C83 /* FinTech */,
 				05E647CA2576916B00B49C83 /* Main.storyboard */,
-				05E647DE2577284900B49C83 /* FinTech */,
 				05E647CD2576916F00B49C83 /* Assets.xcassets */,
 				05E647CF2576917000B49C83 /* LaunchScreen.storyboard */,
 				05E647D22576917000B49C83 /* Info.plist */,
@@ -130,9 +124,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05E647DF2577284900B49C83 /* FinTech in Resources */,
 				05E647D12576917000B49C83 /* LaunchScreen.storyboard in Resources */,
-				05E647E225772A4700B49C83 /* FinTech in Resources */,
 				05E647CE2576916F00B49C83 /* Assets.xcassets in Resources */,
 				05E647CC2576916B00B49C83 /* Main.storyboard in Resources */,
 			);
